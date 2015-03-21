@@ -43,18 +43,29 @@ class Dir
      * @return string
      * @throws \InvalidArgumentException
      */
-    public function getDir($moduleName, $type = '')
+    public function getDir($moduleName, $type)
     {
-        $path = $this->_string->upperCaseWords($moduleName, '_', '/');
-        if ($type) {
-            if (!in_array($type, ['etc', 'i18n', 'view', 'Controller'])) {
-                throw new \InvalidArgumentException("Directory type '{$type}' is not recognized.");
-            }
-            $path .= '/' . $type;
-        }
+        // Query module Loader class for the dir.
+        // $loader = getLoader($moduleName)
+        // $loader->getDir($type);
 
-        $result = $this->_modulesDirectory->getAbsolutePath($path);
+        $class = $this->_string->upperCaseWords($moduleName, '_', '\\') . '\\Module';
 
-        return $result;
+        // Consider using Factory instead of reflection to allow ObjectManager to inject dependencies
+        /** @var ModuleInterface $module */
+        $module = new $class();
+        $dir = $module->getDir($type);
+        return $dir;
+
+//        $path = $this->_string->upperCaseWords($moduleName, '_', '/');
+//
+//        if (!in_array($type, ['etc', 'i18n', 'view', 'Controller'])) {
+//            throw new \InvalidArgumentException("Directory type '{$type}' is not recognized.");
+//        }
+//        $path .= '/' . $type;
+//
+//        $result = $this->_modulesDirectory->getAbsolutePath($path);
+
+//        return $result;
     }
 }

@@ -9,7 +9,7 @@ namespace Magento\Framework\Config;
 /**
  * Class FileIterator
  */
-class FileIterator implements \Iterator, \Countable
+class FileIterator implements FileIteratorInterface
 {
     /**
      * Paths

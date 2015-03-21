@@ -42,7 +42,7 @@ class ReverseResolver
     {
         $path = str_replace('\\', '/', $path);
         foreach ($this->_moduleList->getNames() as $moduleName) {
-            $moduleDir = $this->_moduleDirs->getDir($moduleName);
+            $moduleDir = $this->_moduleDirs->getDir($moduleName, '');
             $moduleDir = str_replace('\\', '/', $moduleDir);
             if ($path == $moduleDir || strpos($path, $moduleDir . '/') === 0) {
                 return $moduleName;
