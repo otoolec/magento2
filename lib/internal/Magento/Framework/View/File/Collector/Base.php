@@ -8,6 +8,8 @@ namespace Magento\Framework\View\File\Collector;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\ReadInterface;
+use Magento\Framework\Module\Dir;
+use Magento\Framework\Module\Dir\Reader;
 use Magento\Framework\View\Design\ThemeInterface;
 use Magento\Framework\View\File\CollectorInterface;
 use Magento\Framework\View\File\Factory;
@@ -46,10 +48,12 @@ class Base implements CollectorInterface
      * @param string $subDir
      */
     public function __construct(
+        Reader $reader,
         Filesystem $filesystem,
         Factory $fileFactory,
         $subDir = ''
     ) {
+        $this->reader = $reader;
         $this->modulesDirectory = $filesystem->getDirectoryRead(DirectoryList::MODULES);
         $this->fileFactory = $fileFactory;
         $this->subDir = $subDir ? $subDir . '/' : '';
@@ -66,27 +70,32 @@ class Base implements CollectorInterface
     {
         $result = [];
         $namespace = $module = '*';
-        $sharedFiles = $this->modulesDirectory->search("{$namespace}/{$module}/view/base/{$this->subDir}{$filePath}");
+        $sharedFiles = $this->reader->getViewFilePaths("{$this->subDir}{$filePath}");
+//        $sharedFiles = $this->modulesDirectory->search("{$namespace}/{$module}/view/base/{$this->subDir}{$filePath}");
 
         $filePathPtn = strtr(preg_quote($filePath), ['\*' => '[^/]+']);
-        $pattern = "#(?<namespace>[^/]+)/(?<module>[^/]+)/view/base/{$this->subDir}" . $filePathPtn . "$#i";
-        foreach ($sharedFiles as $file) {
+        // TODO: This will be a problem since namespace/module doesn't need to be in the path
+//        $pattern = "#(?<namespace>[^/]+)/(?<module>[^/]+)/view/base/{$this->subDir}" . $filePathPtn . "$#i";
+        foreach ($sharedFiles as $file => $moduleFull) {
             $filename = $this->modulesDirectory->getAbsolutePath($file);
-            if (!preg_match($pattern, $filename, $matches)) {
-                continue;
-            }
-            $moduleFull = "{$matches['namespace']}_{$matches['module']}";
+//            if (!preg_match($pattern, $filename, $matches)) {
+//                continue;
+//            }
+//            $moduleFull = "{$matches['namespace']}_{$matches['module']}";
             $result[] = $this->fileFactory->create($filename, $moduleFull, null, true);
         }
         $area = $theme->getData('area');
-        $themeFiles = $this->modulesDirectory->search("{$namespace}/{$module}/view/{$area}/{$this->subDir}{$filePath}");
-        $pattern = "#(?<namespace>[^/]+)/(?<module>[^/]+)/view/{$area}/{$this->subDir}" . $filePathPtn . "$#i";
-        foreach ($themeFiles as $file) {
+        $themeFiles = $this->reader->getViewFilePaths("{$this->subDir}{$filePath}", $area);
+//        $themeFiles = $this->modulesDirectory->search("{$namespace}/{$module}/view/{$area}/{$this->subDir}{$filePath}");
+
+        // TODO: This will be a problem since namespace/module doesn't need to be in the path
+//        $pattern = "#(?<namespace>[^/]+)/(?<module>[^/]+)/view/{$area}/{$this->subDir}" . $filePathPtn . "$#i";
+        foreach ($themeFiles as $file => $moduleFull) {
             $filename = $this->modulesDirectory->getAbsolutePath($file);
-            if (!preg_match($pattern, $filename, $matches)) {
-                continue;
-            }
-            $moduleFull = "{$matches['namespace']}_{$matches['module']}";
+//            if (!preg_match($pattern, $filename, $matches)) {
+//                continue;
+//            }
+//            $moduleFull = "{$matches['namespace']}_{$matches['module']}";
             $result[] = $this->fileFactory->create($filename, $moduleFull);
         }
         return $result;

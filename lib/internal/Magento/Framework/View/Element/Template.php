@@ -375,6 +375,7 @@ class Template extends AbstractBlock
         $appDir = $this->_filesystem->getDirectoryRead(DirectoryList::APP)->getAbsolutePath();
         $compiledDir = $this->_filesystem->getDirectoryRead(DirectoryList::TEMPLATE_MINIFICATION_DIR)
             ->getAbsolutePath();
+        $vendorDir = realpath($this->_filesystem->getDirectoryRead(DirectoryList::VENDOR)->getAbsolutePath());
         return ($this->isPathInDirectory(
             $fileName,
             $compiledDir
@@ -384,6 +385,9 @@ class Template extends AbstractBlock
         ) || $this->isPathInDirectory(
             $fileName,
             $themesDir
+        ) || $this->isPathInDirectory(
+            $fileName,
+            $vendorDir
         ) || $this->isAllowSymlinks()) && $this->getRootDirectory()->isFile(
             $this->getRootDirectory()->getRelativePath($fileName)
         );

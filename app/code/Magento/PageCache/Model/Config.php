@@ -111,6 +111,7 @@ class Config
      */
     public function getVclFile($vclTemplatePath)
     {
+        var_dump($this->_scopeConfig->getValue($vclTemplatePath));die();
         $data = $this->_modulesDirectory->readFile($this->_scopeConfig->getValue($vclTemplatePath));
         return strtr($data, $this->_getReplacements());
     }

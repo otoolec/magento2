@@ -58,12 +58,14 @@ class Reader
         Dir $moduleDirs,
         ModuleListInterface $moduleList,
         Filesystem $filesystem,
-        FileIteratorFactory $fileIteratorFactory
+        FileIteratorFactory $fileIteratorFactory,
+        \Magento\Framework\Stdlib\String $string
     ) {
         $this->moduleDirs = $moduleDirs;
         $this->modulesList = $moduleList;
         $this->fileIteratorFactory = $fileIteratorFactory;
         $this->modulesDirectory = $filesystem->getDirectoryRead(DirectoryList::MODULES);
+        $this->string = $string;
     }
 
     /**
@@ -76,13 +78,37 @@ class Reader
     {
         $result = [];
         foreach ($this->modulesList->getNames() as $moduleName) {
-            $file = $this->getModuleDir('etc', $moduleName) . '/' . $filename;
-            $path = $this->modulesDirectory->getRelativePath($file);
-            if ($this->modulesDirectory->isExist($path)) {
-                $result[] = $path;
-            }
+
+            $dir = $this->getModuleDir('etc', $moduleName);
+            $paths = $this->modulesDirectory->search($filename, $dir);
+            $result = array_merge($result, $paths);
+
+//            $file = $this->getModuleDir('etc', $moduleName) . '/' . $filename;
+//            $path = $this->modulesDirectory->getRelativePath($file);
+//            if ($this->modulesDirectory->isExist($path)) {
+//                $result[] = $path;
+//            }
         }
         return $this->fileIteratorFactory->create($this->modulesDirectory, $result);
+    }
+
+
+    public function getViewFilePaths($filename, $area = 'base')
+    {
+        $result = [];
+        foreach ($this->modulesList->getNames() as $moduleName) {
+
+            $dir = $this->getModuleDir('view', $moduleName);
+            $search = $area . '/' . $filename;
+            $paths = $this->modulesDirectory->search($search, $dir);
+            $map = [];
+            foreach ($paths as $path) {
+                $map[$path] = $moduleName;
+            }
+            $result = array_merge($result, $map);
+        }
+        // TODO: Needs to return the path and module name $path => $moduleName so callers can identify which module it came from.
+        return $result;
     }
 
     /**
@@ -120,7 +146,9 @@ class Reader
             $recursiveIterator = new \RecursiveIteratorIterator($dirIterator, \RecursiveIteratorIterator::LEAVES_ONLY);
             /** @var \SplFileInfo $actionFile */
             foreach ($recursiveIterator as $actionFile) {
-                $actions[] = $this->modulesDirectory->getRelativePath($actionFile->getPathname());
+                $action = $this->string->upperCaseWords($moduleName, '_', '/') . '/Controller' . substr($actionFile->getPathname(), strlen($actionDir));
+//                $actions[] = $this->modulesDirectory->getRelativePath($actionFile->getPathname());
+                $actions[] = $action;
             }
         }
         return $actions;

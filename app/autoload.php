@@ -15,6 +15,7 @@ define('BP', dirname(__DIR__));
 
 $vendorDir = require BP . '/app/etc/vendor_path.php';
 $vendorAutoload = BP . "/{$vendorDir}/autoload.php";
+define('VENDOR', $vendorDir);
 
 /* 'composer install' validation */
 if (file_exists($vendorAutoload)) {

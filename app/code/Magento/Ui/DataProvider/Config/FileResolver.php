@@ -15,39 +15,13 @@ use Magento\Framework\Filesystem;
 /**
  * Class FileResolver
  */
-class FileResolver implements \Magento\Framework\Config\FileResolverInterface
+class FileResolver extends \Magento\Framework\App\Config\FileResolver
 {
-    /**
-     * @var \Magento\Framework\Filesystem\Directory\ReadInterface
-     */
-    protected $directoryRead;
-
-    /**
-     * @var FileIteratorFactory
-     */
-    protected $iteratorFactory;
-
-    /**
-     * @param Filesystem $filesystem
-     * @param FileIteratorFactory $iteratorFactory
-     */
-    public function __construct(
-        Filesystem $filesystem,
-        FileIteratorFactory $iteratorFactory
-    ) {
-        $this->directoryRead = $filesystem->getDirectoryRead(DirectoryList::MODULES);
-        $this->iteratorFactory = $iteratorFactory;
-    }
-
     /**
      * {@inheritdoc}
      */
     public function get($filename, $scope)
     {
-        $iterator = $this->iteratorFactory->create(
-            $this->directoryRead,
-            $this->directoryRead->search('/*/*/etc/data_source/' . $filename)
-        );
-        return $iterator;
+        return parent::get($filename, 'data_source');
     }
 }

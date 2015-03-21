@@ -78,7 +78,6 @@ class DataSetup extends \Magento\Framework\Module\Setup implements ModuleDataSet
         $this->_modulesReader = $context->getModulesReader();
         $this->_migrationFactory = $context->getMigrationFactory();
         $this->filesystem = $context->getFilesystem();
-        $this->modulesDir = $this->filesystem->getDirectoryRead(DirectoryList::MODULES);
         $this->setupCache = new SetupCache();
     }
 

@@ -189,3 +189,7 @@
 ## http://developer.yahoo.com/performance/rules.html#etags
 
     #FileETag none
+
+############################################
+## Uncomment this while developing
+#SetEnv MAGE_MODE "developer"

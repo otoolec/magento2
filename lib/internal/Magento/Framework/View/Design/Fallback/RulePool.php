@@ -13,6 +13,7 @@ use Magento\Framework\View\Design\Fallback\Rule\ModularSwitch;
 use Magento\Framework\View\Design\Fallback\Rule\RuleInterface;
 use Magento\Framework\View\Design\Fallback\Rule\Simple;
 use Magento\Framework\View\Design\Fallback\Rule\Theme;
+use Magento\Framework\View\Design\Fallback\Rule\Factory;
 
 /**
  * Fallback Factory
@@ -46,10 +47,12 @@ class RulePool
      * Constructor
      *
      * @param Filesystem $filesystem
+     * @param Factory $ruleFactory
      */
-    public function __construct(Filesystem $filesystem)
+    public function __construct(Filesystem $filesystem, Factory $ruleFactory)
     {
         $this->filesystem = $filesystem;
+        $this->ruleFactory = $ruleFactory;
     }
 
     /**
@@ -73,7 +76,6 @@ class RulePool
     protected function createTemplateFileRule()
     {
         $themesDir = $this->filesystem->getDirectoryRead(DirectoryList::THEMES)->getAbsolutePath();
-        $modulesDir = $this->filesystem->getDirectoryRead(DirectoryList::MODULES)->getAbsolutePath();
         return new ModularSwitch(
             new Theme(
                 new Simple("$themesDir/<area>/<theme_path>/templates")
@@ -81,8 +83,8 @@ class RulePool
             new Composite(
                 [
                     new Theme(new Simple("$themesDir/<area>/<theme_path>/<namespace>_<module>/templates")),
-                    new Simple("$modulesDir/<namespace>/<module>/view/<area>/templates"),
-                    new Simple("$modulesDir/<namespace>/<module>/view/base/templates"),
+                    $this->ruleFactory->create('Module', ['pattern' => '<area>/templates']),
+                    $this->ruleFactory->create('Module', ['pattern' => 'base/templates']),
                 ]
             )
         );
@@ -96,14 +98,13 @@ class RulePool
     protected function createFileRule()
     {
         $themesDir = $this->filesystem->getDirectoryRead(DirectoryList::THEMES)->getAbsolutePath();
-        $modulesDir = $this->filesystem->getDirectoryRead(DirectoryList::MODULES)->getAbsolutePath();
         return new ModularSwitch(
             new Theme(new Simple("$themesDir/<area>/<theme_path>")),
             new Composite(
                 [
                     new Theme(new Simple("$themesDir/<area>/<theme_path>/<namespace>_<module>")),
-                    new Simple("$modulesDir/<namespace>/<module>/view/<area>"),
-                    new Simple("{$modulesDir}/<namespace>/<module>/view/base"),
+                    $this->ruleFactory->create('Module', ['pattern' => '<area>']),
+                    $this->ruleFactory->create('Module', ['pattern' => 'base']),
                 ]
             )
         );
@@ -117,7 +118,6 @@ class RulePool
     protected function createViewFileRule()
     {
         $themesDir = rtrim($this->filesystem->getDirectoryRead(DirectoryList::THEMES)->getAbsolutePath(), '/');
-        $modulesDir = rtrim($this->filesystem->getDirectoryRead(DirectoryList::MODULES)->getAbsolutePath(), '/');
         $libDir = rtrim($this->filesystem->getDirectoryRead(DirectoryList::LIB_WEB)->getAbsolutePath(), '/');
         return new ModularSwitch(
             new Composite(
@@ -146,16 +146,16 @@ class RulePool
                             ]
                         )
                     ),
-                    new Simple(
-                        "$modulesDir/<namespace>/<module>/view/<area>/web/i18n/<locale>",
-                        ['locale']
+                    $this->ruleFactory->create(
+                        'Module',
+                        ['pattern' => '<area>/web/i18n/<locale>', 'optionalParams' => ['locale']]
                     ),
-                    new Simple(
-                        "$modulesDir/<namespace>/<module>/view/base/web/i18n/<locale>",
-                        ['locale']
+                    $this->ruleFactory->create(
+                        'Module',
+                        ['pattern' => 'base/web/i18n/<locale>', 'optionalParams' => ['locale']]
                     ),
-                    new Simple("$modulesDir/<namespace>/<module>/view/<area>/web"),
-                    new Simple("{$modulesDir}/<namespace>/<module>/view/base/web"),
+                    $this->ruleFactory->create('Module', ['pattern' => '<area>/web']),
+                    $this->ruleFactory->create('Module', ['pattern' => 'base/web']),
                 ]
             )
         );

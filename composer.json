@@ -194,7 +194,8 @@
     "autoload": {
         "psr-4": {
             "Magento\\Framework\\": "lib/internal/Magento/Framework/",
-            "Magento\\Setup\\": "setup/src/Magento/Setup/"
+            "Magento\\Setup\\": "setup/src/Magento/Setup/",
+            "Magento\\Customer\\": "vendor/magento/module-customer"
         }
     },
     "autoload-dev": {

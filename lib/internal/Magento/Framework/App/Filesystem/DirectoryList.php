@@ -106,6 +106,11 @@ class DirectoryList extends \Magento\Framework\Filesystem\DirectoryList
     const UPLOAD = 'upload';
 
     /**
+     * Vendor files
+     */
+    const VENDOR = 'vendor';
+
+    /**
      * A suffix for temporary materialization directory where pre-processed files will be written (if necessary)
      */
     const TMP_MATERIALIZATION_DIR = 'view_preprocessed';
@@ -139,6 +144,7 @@ class DirectoryList extends \Magento\Framework\Filesystem\DirectoryList
             self::UPLOAD => [parent::PATH => 'pub/media/upload', parent::URL_PATH => 'pub/media/upload'],
             self::TMP_MATERIALIZATION_DIR => [parent::PATH => 'var/view_preprocessed'],
             self::TEMPLATE_MINIFICATION_DIR => [parent::PATH => 'var/view_preprocessed/html'],
+            self::VENDOR => [parent::PATH => VENDOR],
         ];
         return parent::getDefaultConfig() + $result;
     }

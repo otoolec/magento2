@@ -660,6 +660,9 @@ class File implements DriverInterface
      */
     public function getAbsolutePath($basePath, $path, $scheme = null)
     {
+        if (strlen($path) > 0 && $this->fixSeparator($path)[0] === '/') {
+            return $this->getScheme($scheme) . $path;
+        }
         return $this->getScheme($scheme) . $basePath . ltrim($this->fixSeparator($path), '/');
     }
 

@@ -79,6 +79,26 @@ class Loader
             $name = key($data);
             $result[$name] = $data[$name];
         }
+
+        $dir = $this->filesystem->getDirectoryRead(DirectoryList::VENDOR);
+        foreach ($dir->search('*/*/etc/module.xml') as $file) {
+            $contents = $dir->readFile($file);
+
+            try {
+                $this->parser->loadXML($contents);
+            } catch (\Magento\Framework\Exception $e) {
+                throw new \Magento\Framework\Exception(
+                    'Invalid Document: ' . $file . PHP_EOL . ' Error: ' . $e->getMessage(),
+                    $e->getCode(),
+                    $e
+                );
+            }
+
+            $data = $this->converter->convert($this->parser->getDom());
+            $name = key($data);
+            $result[$name] = $data[$name];
+        }
+
         return $this->sortBySequence($result);
     }
 

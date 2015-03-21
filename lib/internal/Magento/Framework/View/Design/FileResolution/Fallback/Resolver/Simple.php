@@ -92,7 +92,7 @@ class Simple implements Fallback\ResolverInterface
      *
      * @param RuleInterface $fallbackRule
      * @param string $file
-     * @param array $params
+     * @param array $params Such as ['area' => $area, 'theme' => $theme, 'locale' => $locale]
      * @return string|bool
      */
     protected function resolveFile(RuleInterface $fallbackRule, $file, array $params = [])

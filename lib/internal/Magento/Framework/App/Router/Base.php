@@ -265,7 +265,11 @@ class Base implements \Magento\Framework\App\RouterInterface
     protected function matchAction(\Magento\Framework\App\RequestInterface $request, array $params)
     {
         $moduleFrontName = $this->matchModuleFrontName($request, $params['moduleFrontName']);
+
+
         if (empty($moduleFrontName)) {
+            echo("Can't find module front name: $moduleFrontName");die();
+            throw new \Exception("Can't find module front name: $moduleFrontName");
             return null;
         }
 
@@ -275,6 +279,8 @@ class Base implements \Magento\Framework\App\RouterInterface
         $modules = $this->_routeConfig->getModulesByFrontName($moduleFrontName);
 
         if (empty($modules) === true) {
+            echo "No modules found by frontname for: $moduleFrontName"; die();
+            throw new \Exception("No modules found by frontname for: $moduleFrontName");
             return null;
         }
 
@@ -294,6 +300,7 @@ class Base implements \Magento\Framework\App\RouterInterface
             $currentModuleName = $moduleName;
 
             $actionClassName = $this->actionList->get($moduleName, $this->pathPrefix, $actionPath, $action);
+
             if (!$actionClassName || !is_subclass_of($actionClassName, $this->actionInterface)) {
                 continue;
             }
@@ -301,7 +308,6 @@ class Base implements \Magento\Framework\App\RouterInterface
             $actionInstance = $this->actionFactory->create($actionClassName, ['request' => $request]);
             break;
         }
-
         if (null == $actionInstance) {
             $actionInstance = $this->getNotFoundAction($currentModuleName, $request);
             if ($actionInstance === null) {
