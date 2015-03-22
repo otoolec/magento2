@@ -111,7 +111,7 @@ class Config
      */
     public function getVclFile($vclTemplatePath)
     {
-        var_dump($this->_scopeConfig->getValue($vclTemplatePath));die();
+        // TODO: Need to investigate if this will be a problem when modules are in vendor directory.
         $data = $this->_modulesDirectory->readFile($this->_scopeConfig->getValue($vclTemplatePath));
         return strtr($data, $this->_getReplacements());
     }

@@ -268,8 +268,6 @@ class Base implements \Magento\Framework\App\RouterInterface
 
 
         if (empty($moduleFrontName)) {
-            echo("Can't find module front name: $moduleFrontName");die();
-            throw new \Exception("Can't find module front name: $moduleFrontName");
             return null;
         }
 
@@ -279,8 +277,6 @@ class Base implements \Magento\Framework\App\RouterInterface
         $modules = $this->_routeConfig->getModulesByFrontName($moduleFrontName);
 
         if (empty($modules) === true) {
-            echo "No modules found by frontname for: $moduleFrontName"; die();
-            throw new \Exception("No modules found by frontname for: $moduleFrontName");
             return null;
         }
 
