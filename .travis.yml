@@ -54,6 +54,6 @@ script:
   # Integration integrity tests
   - sh -c "if [ '$TEST_SUITE' = 'integration_integrity' ]; then cd dev/tests/integration/; ./../../../vendor/bin/phpunit -c phpunit.xml.dist testsuite/Magento/Test/Integrity; fi"
   # Static tests [Code Style]
-  - sh -c "if [ '$TEST_SUITE' = 'static_phpcs' ]; then cd dev/tests/static; ./../../../vendor/bin/phpunit -c phpunit.xml.dist --filter 'Magento\\\\Test\\\\Php\\\\LiveCodeTest::testCodeStyle'; fi"
+  - sh -c "if [ '$TEST_SUITE' = 'static_phpcs' ]; then cd dev/tests/static; ./../../../vendor/bin/phpunit -c phpunit.xml.dist --filter 'Magento\\\\Test\\\\Php\\\\LiveCodeTest::testCodeStyle.*'; fi"
   # Static tests [Code Style]
   - sh -c "if [ '$TEST_SUITE' = 'static_annotation' ]; then cd dev/tests/static; ./../../../vendor/bin/phpunit -c phpunit.xml.dist --filter 'Magento\\\\Test\\\\Php\\\\LiveCodeTest::testAnnotationStandard'; fi"
