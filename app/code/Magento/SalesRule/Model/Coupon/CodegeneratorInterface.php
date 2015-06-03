@@ -14,10 +14,6 @@ interface CodegeneratorInterface
      */
     public function generateCode();
 
-    /**
-     * Retrieve delimiter
-     *
-     * @return string
-     */
+
     public function getDelimiter();
 }
